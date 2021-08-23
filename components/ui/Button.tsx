@@ -7,7 +7,7 @@ import classes from './Button.module.css';
 const Button: FC<{
   link?: string;
   type?: 'button' | 'submit';
-  onClick?: () => void;
+  onClick?: any;
 }> = ({ children, link, type = 'button', onClick }) =>
   link ? (
     <Link href={link}>
