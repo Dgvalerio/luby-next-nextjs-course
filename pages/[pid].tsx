@@ -1,0 +1,49 @@
+import fs from 'fs/promises';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import path from 'path';
+
+import { IProduct } from './index';
+
+interface ProductDetailPageProps {
+  loadedProduct: IProduct;
+}
+
+const ProductDetailPage: NextPage<ProductDetailPageProps> = ({
+  loadedProduct: { title, description },
+}) => (
+  <>
+    <h1>{title}</h1>
+    <p>{description}</p>
+  </>
+);
+
+export const getStaticProps: GetStaticProps<ProductDetailPageProps> = async ({
+  params: { pid: productId },
+}) => {
+  const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+  const jsonData = await fs.readFile(filePath);
+  const data = await JSON.parse(jsonData.toString());
+  const product = data.products.find(
+    (aProduct: IProduct) => aProduct.id === productId
+  );
+
+  if (!product) return { notFound: true };
+
+  return {
+    props: {
+      loadedProduct: product,
+    },
+    revalidate: 10,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [
+    { params: { pid: 'p1' } },
+    { params: { pid: 'p2' } },
+    { params: { pid: 'p3' } },
+  ],
+  fallback: false,
+});
+
+export default ProductDetailPage;
