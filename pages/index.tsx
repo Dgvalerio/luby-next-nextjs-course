@@ -1,7 +1,5 @@
-import { FC } from 'react';
-
 import fs from 'fs/promises';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, NextPage } from 'next';
 import path from 'path';
 
 interface IProduct {
@@ -10,7 +8,7 @@ interface IProduct {
   description: string;
 }
 
-const HomePage: FC<{ products: IProduct[] }> = ({ products }) => (
+const HomePage: NextPage<{ products: IProduct[] }> = ({ products }) => (
   <ul>
     {products.map((product) => (
       <li key={product.id}>{product.title}</li>
@@ -19,6 +17,7 @@ const HomePage: FC<{ products: IProduct[] }> = ({ products }) => (
 );
 
 export const getStaticProps: GetStaticProps = async () => {
+  console.log('(Re-)Generating...');
   const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
   const jsonData = await fs.readFile(filePath);
   const data = await JSON.parse(jsonData.toString());
@@ -27,6 +26,7 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       products: data.products,
     },
+    revalidate: 10,
   };
 };
 
