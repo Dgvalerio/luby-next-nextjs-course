@@ -1,5 +1,6 @@
 import { FC } from 'react';
 
+import EventList from '../components/events/EventList';
 import { getFeaturedEvents } from '../dummy-data';
 
 const HomePage: FC = () => {
@@ -9,9 +10,7 @@ const HomePage: FC = () => {
     <div>
       <h1>The Home Page</h1>
 
-      <ul>
-        <li>{featuredEvents}</li>
-      </ul>
+      <EventList items={featuredEvents} />
     </div>
   );
 };

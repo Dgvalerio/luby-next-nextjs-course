@@ -6,7 +6,8 @@ import EventItem from './EventItem';
 const EventList: FC<{ items: IEvent[] }> = ({ items }) => (
   <ul>
     {items.map((event) => (
-      <EventItem key={event.id} item={event} />
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      <EventItem key={event.id} {...event} />
     ))}
   </ul>
 );
