@@ -1,5 +1,5 @@
 import { FC } from 'react';
 
-const index: FC = () => <h1>Starting Page</h1>;
+const HomePage: FC = () => <h1>The Home Page</h1>;
 
-export default index;
+export default HomePage;
