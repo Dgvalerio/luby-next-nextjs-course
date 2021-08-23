@@ -3,6 +3,7 @@ import { FC } from 'react';
 import Link from 'next/link';
 
 import { IEvent } from '../../dummy-data';
+import classes from './EventItem.module.css';
 
 const EventItem: FC<IEvent> = ({ id, title, image, date, location }) => {
   const humanReadableDate = new Date(date).toLocaleDateString('pt-BR', {
@@ -16,19 +17,19 @@ const EventItem: FC<IEvent> = ({ id, title, image, date, location }) => {
   const exploreLink = `/events/${id}`;
 
   return (
-    <li>
+    <li className={classes.item}>
       <img src={image} alt={title} />
-      <div>
-        <div>
+      <div className={classes.content}>
+        <div className={classes.summary}>
           <h2>{title}</h2>
-          <div>
+          <div className={classes.date}>
             <time>{humanReadableDate}</time>
           </div>
-          <div>
+          <div className={classes.address}>
             <address>{formattedAddress}</address>
           </div>
         </div>
-        <div>
+        <div className={classes.actions}>
           <Link href={exploreLink}>Explore Event</Link>
         </div>
       </div>
