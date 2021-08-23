@@ -1,5 +1,11 @@
 import { FC } from 'react';
 
-const index: FC = () => <h1>Hello</h1>;
+const HomePage: FC = () => (
+  <ul>
+    <li>Product 1</li>
+    <li>Product 2</li>
+    <li>Product 3</li>
+  </ul>
+);
 
-export default index;
+export default HomePage;
