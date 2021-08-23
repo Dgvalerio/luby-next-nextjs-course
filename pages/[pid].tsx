@@ -9,29 +9,28 @@ interface ProductDetailPageProps {
 }
 
 const ProductDetailPage: NextPage<ProductDetailPageProps> = ({
-  loadedProduct,
-}) => {
-  if (!loadedProduct) return <p>Loading...</p>;
+  loadedProduct: { title, description },
+}) => (
+  <>
+    <h1>{title}</h1>
+    <p>{description}</p>
+  </>
+);
 
-  const { title, description } = loadedProduct;
+const getData = async (): Promise<IProduct[]> => {
+  const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+  const jsonData = await fs.readFile(filePath);
+  const data = await JSON.parse(jsonData.toString());
 
-  return (
-    <>
-      <h1>{title}</h1>
-      <p>{description}</p>
-    </>
-  );
+  return data.products;
 };
 
 export const getStaticProps: GetStaticProps<ProductDetailPageProps> = async ({
   params: { pid: productId },
 }) => {
-  const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
-  const jsonData = await fs.readFile(filePath);
-  const data = await JSON.parse(jsonData.toString());
-  const product = data.products.find(
-    (aProduct: IProduct) => aProduct.id === productId
-  );
+  const data = await getData();
+
+  const product = data.find((p: IProduct) => p.id === productId);
 
   if (!product) return { notFound: true };
 
@@ -43,9 +42,14 @@ export const getStaticProps: GetStaticProps<ProductDetailPageProps> = async ({
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: [{ params: { pid: 'p1' } }],
-  fallback: true,
-});
+export const getStaticPaths: GetStaticPaths = async () => {
+  const data = await getData();
+  const paths = data.map((p) => ({ params: { pid: p.id } }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
 
 export default ProductDetailPage;
