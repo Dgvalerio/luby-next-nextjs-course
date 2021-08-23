@@ -1,6 +1,8 @@
 import { FC } from 'react';
 
+import fs from 'fs/promises';
 import { GetStaticProps } from 'next';
+import path from 'path';
 
 interface IProduct {
   id: string;
@@ -16,16 +18,16 @@ const HomePage: FC<{ products: IProduct[] }> = ({ products }) => (
   </ul>
 );
 
-export const getStaticProps: GetStaticProps = async () => ({
-  props: {
-    products: [
-      {
-        id: 'p1',
-        title: 'Product 1',
-        description: 'This is product 1',
-      },
-    ],
-  },
-});
+export const getStaticProps: GetStaticProps = async () => {
+  const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+  const jsonData = await fs.readFile(filePath);
+  const data = await JSON.parse(jsonData.toString());
+
+  return {
+    props: {
+      products: data.products,
+    },
+  };
+};
 
 export default HomePage;
