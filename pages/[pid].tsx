@@ -9,13 +9,19 @@ interface ProductDetailPageProps {
 }
 
 const ProductDetailPage: NextPage<ProductDetailPageProps> = ({
-  loadedProduct: { title, description },
-}) => (
-  <>
-    <h1>{title}</h1>
-    <p>{description}</p>
-  </>
-);
+  loadedProduct,
+}) => {
+  if (!loadedProduct) return <p>Loading...</p>;
+
+  const { title, description } = loadedProduct;
+
+  return (
+    <>
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </>
+  );
+};
 
 export const getStaticProps: GetStaticProps<ProductDetailPageProps> = async ({
   params: { pid: productId },
@@ -38,12 +44,8 @@ export const getStaticProps: GetStaticProps<ProductDetailPageProps> = async ({
 };
 
 export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: [
-    { params: { pid: 'p1' } },
-    { params: { pid: 'p2' } },
-    { params: { pid: 'p3' } },
-  ],
-  fallback: false,
+  paths: [{ params: { pid: 'p1' } }],
+  fallback: true,
 });
 
 export default ProductDetailPage;
