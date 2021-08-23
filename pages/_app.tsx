@@ -1,6 +1,11 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import '../styles/globals.css';
+import Layout from '../components/layout/layout';
 
-// eslint-disable-next-line react/jsx-props-no-spreading
-const MyApp = ({ Component, pageProps }) => <Component {...pageProps} />;
+const MyApp = ({ Component, pageProps }) => (
+  <Layout>
+    <Component {...pageProps} />
+  </Layout>
+);
 
 export default MyApp;
