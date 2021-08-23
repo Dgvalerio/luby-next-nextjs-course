@@ -14,7 +14,7 @@ const EventsSearch: FC<{ onSearch: any }> = ({ onSearch }) => {
     if (!yearInputRef.current || !monthInputRef.current) return;
 
     const selectedYear = yearInputRef.current.value;
-    const selectedMonth = yearInputRef.current.value;
+    const selectedMonth = monthInputRef.current.value;
 
     onSearch(selectedYear, selectedMonth);
   };
