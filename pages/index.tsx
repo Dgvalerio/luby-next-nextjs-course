@@ -16,11 +16,15 @@ const HomePage: NextPage<{ products: IProduct[] }> = ({ products }) => (
   </ul>
 );
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async (context) => {
   console.log('(Re-)Generating...');
   const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
   const jsonData = await fs.readFile(filePath);
   const data = await JSON.parse(jsonData.toString());
+
+  if (!data) return { redirect: { destination: '/no-data' }, props: {} };
+
+  if (data.products.length === 0) return { notFound: true };
 
   return {
     props: {
