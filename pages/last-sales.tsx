@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { NextPage } from 'next';
+import useSWR from 'swr';
 
 interface ISale {
   id: string;
@@ -10,31 +11,26 @@ interface ISale {
 
 const LastSalesPage: NextPage = () => {
   const [sales, setSales] = useState<ISale[]>();
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { data, error } = useSWR(
+    'https://luby-nextjs-course-default-rtdb.firebaseio.com/Sales.json'
+  );
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch('https://luby-nextjs-course-default-rtdb.firebaseio.com/Sales.json')
-      .then((response) => response.json())
-      .then((response) =>
-        setSales(
-          Object.entries(response).map(
-            ([name, value]: [
-              string,
-              { username: string; volume: number }
-            ]) => ({
-              id: name,
-              ...value,
-            })
-          )
+    if (data)
+      setSales(
+        Object.entries(data).map(
+          ([name, value]: [string, { username: string; volume: number }]) => ({
+            id: name,
+            ...value,
+          })
         )
-      )
-      .finally(() => setIsLoading(false));
-  }, []);
+      );
+  }, [data]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Failed to load!</p>;
 
-  if (!sales) return <p>No data yet!</p>;
+  if (!data || !sales) return <p>Loading...</p>;
 
   return (
     <ul>
