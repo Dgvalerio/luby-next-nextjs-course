@@ -1,12 +1,5 @@
-export interface IEvent {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  image: string;
-  isFeatured: boolean;
-}
+// eslint-disable-next-line import/no-cycle
+import { IEvent } from './helpers/api-utils';
 
 const DUMMY_EVENTS = [
   {
@@ -41,9 +34,6 @@ const DUMMY_EVENTS = [
   },
 ];
 
-export const getFeaturedEvents = (): IEvent[] =>
-  DUMMY_EVENTS.filter((event) => event.isFeatured);
-
 export const getAllEvents = (): IEvent[] => DUMMY_EVENTS;
 
 export const getFilteredEvents = ({
@@ -59,6 +49,3 @@ export const getFilteredEvents = ({
       eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
     );
   });
-
-export const getEventById = (id: string): IEvent =>
-  DUMMY_EVENTS.find((event) => event.id === id);

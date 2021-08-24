@@ -1,5 +1,13 @@
 // https://luby-nextjs-course-default-rtdb.firebaseio.com/evens
-import { IEvent } from '../dummy-data';
+export interface IEvent {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  date: string;
+  image: string;
+  isFeatured: boolean;
+}
 
 export const getAllEvents = async (): Promise<IEvent[]> => {
   const response = await fetch(
@@ -29,4 +37,9 @@ export const getAllEvents = async (): Promise<IEvent[]> => {
 export const getFeaturedEvents = async (): Promise<IEvent[]> => {
   const allEvents = await getAllEvents();
   return allEvents.filter((event) => event.isFeatured);
+};
+
+export const getEventById = async (id: string | string[]): Promise<IEvent> => {
+  const allEvents = await getAllEvents();
+  return allEvents.find((event) => event.id === id);
 };

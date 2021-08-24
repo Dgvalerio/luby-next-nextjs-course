@@ -1,18 +1,16 @@
-import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 
 import EventContent from '../../components/event-detail/event-content';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventSummary from '../../components/event-detail/event-summary';
 import ErrorAlert from '../../components/ui/error-alert';
-import { getEventById } from '../../dummy-data';
+import { getAllEvents, getEventById, IEvent } from '../../helpers/api-utils';
 
-const EventDetailPage: NextPage = () => {
-  const router = useRouter();
+interface EventDetailPageProps {
+  event: IEvent;
+}
 
-  const { eventId } = router.query;
-  const event = getEventById(eventId);
-
+const EventDetailPage: NextPage<EventDetailPageProps> = ({ event }) => {
   if (!event)
     return (
       <ErrorAlert>
@@ -34,6 +32,29 @@ const EventDetailPage: NextPage = () => {
       </EventContent>
     </>
   );
+};
+
+export const getStaticProps: GetStaticProps<EventDetailPageProps> = async ({
+  params: { eventId },
+}) => {
+  const event = await getEventById(eventId);
+
+  return {
+    props: {
+      event,
+    },
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const events = await getAllEvents();
+
+  const paths = events.map((event) => ({ params: { eventId: event.id } }));
+
+  return {
+    paths,
+    fallback: false,
+  };
 };
 
 export default EventDetailPage;

@@ -1,8 +1,7 @@
 import { GetStaticProps, NextPage } from 'next';
 
 import EventList from '../components/events/event-list';
-import { IEvent } from '../dummy-data';
-import { getFeaturedEvents } from '../helpers/api-utils';
+import { getFeaturedEvents, IEvent } from '../helpers/api-utils';
 
 interface HomePageProps {
   events: IEvent[];
