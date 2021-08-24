@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import path from 'path';
 
-import { IProduct } from './index';
+import { IProduct } from '../index';
 
 interface ProductDetailPageProps {
   loadedProduct: IProduct;
