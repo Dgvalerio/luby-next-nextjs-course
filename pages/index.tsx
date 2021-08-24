@@ -1,5 +1,5 @@
-import { FC } from 'react';
+import { NextPage } from 'next';
 
-const index: FC = () => <h1>Hello</h1>;
+const Home: NextPage = () => <h1>Hello</h1>;
 
-export default index;
+export default Home;
