@@ -34,8 +34,7 @@ const DUMMY_EVENTS = [
   },
 ];
 
-export const getAllEvents = (): IEvent[] => DUMMY_EVENTS;
-
+// eslint-disable-next-line import/prefer-default-export
 export const getFilteredEvents = ({
   year,
   month,
