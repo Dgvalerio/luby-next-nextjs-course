@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { NextPage } from 'next';
+import { GetStaticProps, NextPage } from 'next';
 import useSWR from 'swr';
 
 interface ISale {
@@ -9,8 +9,12 @@ interface ISale {
   volume: number;
 }
 
-const LastSalesPage: NextPage = () => {
-  const [sales, setSales] = useState<ISale[]>();
+interface LastSalesPageProps {
+  sales: ISale[];
+}
+
+const LastSalesPage: NextPage<LastSalesPageProps> = ({ sales: preSales }) => {
+  const [sales, setSales] = useState<ISale[]>(preSales);
 
   const { data, error } = useSWR(
     'https://luby-nextjs-course-default-rtdb.firebaseio.com/Sales.json'
@@ -30,7 +34,7 @@ const LastSalesPage: NextPage = () => {
 
   if (error) return <p>Failed to load!</p>;
 
-  if (!data || !sales) return <p>Loading...</p>;
+  if (!data && !sales) return <p>Loading...</p>;
 
   return (
     <ul>
@@ -42,5 +46,19 @@ const LastSalesPage: NextPage = () => {
     </ul>
   );
 };
+
+export const getStaticProps: GetStaticProps<LastSalesPageProps> = async () =>
+  fetch('https://luby-nextjs-course-default-rtdb.firebaseio.com/Sales.json')
+    .then((response) => response.json())
+    .then((response) => {
+      const sales = Object.entries(response).map(
+        ([name, value]: [string, { username: string; volume: number }]) => ({
+          id: name,
+          ...value,
+        })
+      );
+
+      return { props: { sales } };
+    });
 
 export default LastSalesPage;
