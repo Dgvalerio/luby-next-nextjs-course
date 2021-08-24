@@ -1,5 +1,16 @@
 import { NextPage } from 'next';
 
-const Home: NextPage = () => <h1>Hello</h1>;
+import EventList from '../components/events/event-list';
+import { getFeaturedEvents } from '../dummy-data';
 
-export default Home;
+const HomePage: NextPage = () => {
+  const featuredEvents = getFeaturedEvents();
+
+  return (
+    <div>
+      <EventList items={featuredEvents} />
+    </div>
+  );
+};
+
+export default HomePage;
