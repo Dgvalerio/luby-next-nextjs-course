@@ -4,7 +4,11 @@ import EventContent from '../../components/event-detail/event-content';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventSummary from '../../components/event-detail/event-summary';
 import ErrorAlert from '../../components/ui/error-alert';
-import { getAllEvents, getEventById, IEvent } from '../../helpers/api-utils';
+import {
+  getEventById,
+  getFeaturedEvents,
+  IEvent,
+} from '../../helpers/api-utils';
 
 interface EventDetailPageProps {
   event: IEvent;
@@ -43,17 +47,18 @@ export const getStaticProps: GetStaticProps<EventDetailPageProps> = async ({
     props: {
       event,
     },
+    revalidate: 30,
   };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const events = await getAllEvents();
+  const events = await getFeaturedEvents();
 
   const paths = events.map((event) => ({ params: { eventId: event.id } }));
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 };
 
