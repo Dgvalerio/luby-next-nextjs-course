@@ -13,9 +13,7 @@ const AllEventsPage: NextPage<AllEventsPageProps> = ({ events }) => {
   const router = useRouter();
 
   const findEventsHandler = (year, month) => {
-    const fullPath = `/events/${year}/${month}`;
-
-    router.push(fullPath);
+    router.push(`/events/${year}/${month}`);
   };
 
   return (

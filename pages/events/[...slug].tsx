@@ -1,34 +1,27 @@
 /* eslint-disable no-restricted-globals */
-import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { GetServerSideProps, NextPage } from 'next';
 
 import EventList from '../../components/events/event-list';
 import ResultsTitle from '../../components/events/results-title';
 import Button from '../../components/ui/button';
 import ErrorAlert from '../../components/ui/error-alert';
-import { getFilteredEvents } from '../../dummy-data';
+import { getFilteredEvents, IEvent } from '../../helpers/api-utils';
 
-const FilteredEventsPage: NextPage = () => {
-  const router = useRouter();
+interface FilteredEventsPageProps {
+  events?: IEvent[];
+  date?: {
+    year: number;
+    month: number;
+  };
+  hasError?: boolean;
+}
 
-  const filterData = router.query.slug;
-
-  if (!filterData) return <p className="center">Loading...</p>;
-
-  const filteredYear = filterData[0];
-  const filteredMonth = filterData[1];
-
-  const numYear = +filteredYear;
-  const numMonth = +filteredMonth;
-
-  if (
-    isNaN(numYear) ||
-    isNaN(numMonth) ||
-    numYear > 2030 ||
-    numYear < 2021 ||
-    numMonth < 1 ||
-    numMonth > 12
-  )
+const FilteredEventsPage: NextPage<FilteredEventsPageProps> = ({
+  events,
+  hasError,
+  date: dateProp,
+}) => {
+  if (hasError)
     return (
       <>
         <ErrorAlert>
@@ -40,10 +33,7 @@ const FilteredEventsPage: NextPage = () => {
       </>
     );
 
-  const filteredEvents = getFilteredEvents({
-    year: numYear,
-    month: numMonth,
-  });
+  const filteredEvents = events;
 
   if (!filteredEvents || filteredEvents.length === 0)
     return (
@@ -57,7 +47,7 @@ const FilteredEventsPage: NextPage = () => {
       </>
     );
 
-  const date = new Date(numYear, numMonth - 1);
+  const date = new Date(dateProp.year, dateProp.month - 1);
 
   return (
     <>
@@ -66,5 +56,35 @@ const FilteredEventsPage: NextPage = () => {
     </>
   );
 };
+
+export const getServerSideProps: GetServerSideProps<FilteredEventsPageProps> =
+  async ({ params: { slug: filterData } }) => {
+    const filteredYear = filterData[0];
+    const filteredMonth = filterData[1];
+
+    const numYear = +filteredYear;
+    const numMonth = +filteredMonth;
+
+    if (
+      isNaN(numYear) ||
+      isNaN(numMonth) ||
+      numYear > 2030 ||
+      numYear < 2021 ||
+      numMonth < 1 ||
+      numMonth > 12
+    )
+      return {
+        props: {
+          hasError: true,
+        },
+      };
+
+    const events = await getFilteredEvents({
+      year: numYear,
+      month: numMonth,
+    });
+
+    return { props: { events, date: { year: numYear, month: numMonth } } };
+  };
 
 export default FilteredEventsPage;

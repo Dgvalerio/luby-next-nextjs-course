@@ -43,3 +43,19 @@ export const getEventById = async (id: string | string[]): Promise<IEvent> => {
   const allEvents = await getAllEvents();
   return allEvents.find((event) => event.id === id);
 };
+
+export const getFilteredEvents = async ({
+  year,
+  month,
+}: {
+  year: number;
+  month: number;
+}): Promise<IEvent[]> => {
+  const allEvents = await getAllEvents();
+  return allEvents.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
+    );
+  });
+};

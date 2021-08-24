@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useRef } from 'react';
+import { FormEvent, useRef } from 'react';
 
 import { NextPage } from 'next';
 
@@ -10,7 +10,7 @@ const EventsSearch: NextPage<{ onSearch }> = ({ onSearch }) => {
   const yearInputRef = useRef<HTMLSelectElement>(null);
   const monthInputRef = useRef<HTMLSelectElement>(null);
 
-  function submitHandler(event) {
+  const submitHandler = (event: FormEvent) => {
     event.preventDefault();
 
     if (!yearInputRef.current || !monthInputRef.current) return;
@@ -19,7 +19,7 @@ const EventsSearch: NextPage<{ onSearch }> = ({ onSearch }) => {
     const selectedMonth = monthInputRef.current.value;
 
     onSearch(selectedYear, selectedMonth);
-  }
+  };
 
   return (
     <form className={classes.form} onSubmit={submitHandler}>
@@ -42,14 +42,14 @@ const EventsSearch: NextPage<{ onSearch }> = ({ onSearch }) => {
             <option value="6">June</option>
             <option value="7">July</option>
             <option value="8">August</option>
-            <option value="9">Septemer</option>
+            <option value="9">September</option>
             <option value="10">October</option>
             <option value="11">November</option>
             <option value="12">December</option>
           </select>
         </div>
       </div>
-      <Button>Find Events</Button>
+      <Button type="submit">Find Events</Button>
     </form>
   );
 };
