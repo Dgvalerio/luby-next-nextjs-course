@@ -1,27 +1,50 @@
 /* eslint-disable no-restricted-globals */
-import { GetServerSideProps, NextPage } from 'next';
+import { useEffect, useState } from 'react';
+
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import useSWR from 'swr';
 
 import EventList from '../../components/events/event-list';
 import ResultsTitle from '../../components/events/results-title';
 import Button from '../../components/ui/button';
 import ErrorAlert from '../../components/ui/error-alert';
-import { getFilteredEvents, IEvent } from '../../helpers/api-utils';
+import {
+  apiUrl,
+  filterEvents,
+  formatEvents,
+  IEvent,
+} from '../../helpers/api-utils';
 
-interface FilteredEventsPageProps {
-  events?: IEvent[];
-  date?: {
-    year: number;
-    month: number;
-  };
-  hasError?: boolean;
-}
+const FilteredEventsPage: NextPage = () => {
+  const [loadedEvents, setLoadedEvents] = useState<IEvent[]>();
+  const router = useRouter();
 
-const FilteredEventsPage: NextPage<FilteredEventsPageProps> = ({
-  events,
-  hasError,
-  date: dateProp,
-}) => {
-  if (hasError)
+  const filterData = router.query.slug;
+
+  const { data, error } = useSWR(apiUrl);
+
+  useEffect(() => {
+    if (data) setLoadedEvents(formatEvents(data));
+  }, [data]);
+
+  if (!loadedEvents) return <p className="center">Loading...</p>;
+
+  const filteredYear = filterData[0];
+  const filteredMonth = filterData[1];
+
+  const numYear = +filteredYear;
+  const numMonth = +filteredMonth;
+
+  if (
+    isNaN(numYear) ||
+    isNaN(numMonth) ||
+    numYear > 2030 ||
+    numYear < 2021 ||
+    numMonth < 1 ||
+    numMonth > 12 ||
+    error
+  )
     return (
       <>
         <ErrorAlert>
@@ -33,7 +56,11 @@ const FilteredEventsPage: NextPage<FilteredEventsPageProps> = ({
       </>
     );
 
-  const filteredEvents = events;
+  const filteredEvents = filterEvents({
+    events: loadedEvents,
+    year: numYear,
+    month: numMonth,
+  });
 
   if (!filteredEvents || filteredEvents.length === 0)
     return (
@@ -47,7 +74,7 @@ const FilteredEventsPage: NextPage<FilteredEventsPageProps> = ({
       </>
     );
 
-  const date = new Date(dateProp.year, dateProp.month - 1);
+  const date = new Date(numYear, numMonth - 1);
 
   return (
     <>
@@ -56,35 +83,5 @@ const FilteredEventsPage: NextPage<FilteredEventsPageProps> = ({
     </>
   );
 };
-
-export const getServerSideProps: GetServerSideProps<FilteredEventsPageProps> =
-  async ({ params: { slug: filterData } }) => {
-    const filteredYear = filterData[0];
-    const filteredMonth = filterData[1];
-
-    const numYear = +filteredYear;
-    const numMonth = +filteredMonth;
-
-    if (
-      isNaN(numYear) ||
-      isNaN(numMonth) ||
-      numYear > 2030 ||
-      numYear < 2021 ||
-      numMonth < 1 ||
-      numMonth > 12
-    )
-      return {
-        props: {
-          hasError: true,
-        },
-      };
-
-    const events = await getFilteredEvents({
-      year: numYear,
-      month: numMonth,
-    });
-
-    return { props: { events, date: { year: numYear, month: numMonth } } };
-  };
 
 export default FilteredEventsPage;

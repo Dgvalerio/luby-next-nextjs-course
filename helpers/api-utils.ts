@@ -1,4 +1,6 @@
-// https://luby-nextjs-course-default-rtdb.firebaseio.com/evens
+export const apiUrl =
+  'https://luby-nextjs-course-default-rtdb.firebaseio.com/evens.json';
+
 export interface IEvent {
   id: string;
   title: string;
@@ -9,14 +11,8 @@ export interface IEvent {
   isFeatured: boolean;
 }
 
-export const getAllEvents = async (): Promise<IEvent[]> => {
-  const response = await fetch(
-    'https://luby-nextjs-course-default-rtdb.firebaseio.com/evens.json'
-  );
-
-  const data = await response.json();
-
-  return Object.entries(data).map(
+export const formatEvents = (data): IEvent[] =>
+  Object.entries(data).map(
     ([name, value]: [
       string,
       {
@@ -32,6 +28,13 @@ export const getAllEvents = async (): Promise<IEvent[]> => {
       ...value,
     })
   );
+
+export const getAllEvents = async (): Promise<IEvent[]> => {
+  const response = await fetch(apiUrl);
+
+  const data = await response.json();
+
+  return formatEvents(data);
 };
 
 export const getFeaturedEvents = async (): Promise<IEvent[]> => {
@@ -44,6 +47,22 @@ export const getEventById = async (id: string | string[]): Promise<IEvent> => {
   return allEvents.find((event) => event.id === id);
 };
 
+export const filterEvents = ({
+  events,
+  year,
+  month,
+}: {
+  events: IEvent[];
+  year: number;
+  month: number;
+}): IEvent[] =>
+  events.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
+    );
+  });
+
 export const getFilteredEvents = async ({
   year,
   month,
@@ -51,11 +70,6 @@ export const getFilteredEvents = async ({
   year: number;
   month: number;
 }): Promise<IEvent[]> => {
-  const allEvents = await getAllEvents();
-  return allEvents.filter((event) => {
-    const eventDate = new Date(event.date);
-    return (
-      eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
-    );
-  });
+  const events = await getAllEvents();
+  return filterEvents({ events, year, month });
 };
