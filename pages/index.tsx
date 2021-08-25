@@ -11,6 +11,8 @@ const Home: NextPage = () => {
 
     const email = emailInputRef.current.value;
     const feedback = feedbackInputRef.current.value;
+
+    fetch('');
   };
 
   return (
