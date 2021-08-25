@@ -2,6 +2,8 @@ import { FormEvent, useRef } from 'react';
 
 import { NextPage } from 'next';
 
+import { FeedbackPOST } from './api/feedback';
+
 const Home: NextPage = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const feedbackInputRef = useRef<HTMLTextAreaElement>(null);
@@ -12,7 +14,17 @@ const Home: NextPage = () => {
     const email = emailInputRef.current.value;
     const feedback = feedbackInputRef.current.value;
 
-    fetch('');
+    const body: FeedbackPOST = { email, text: feedback };
+
+    fetch('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => console.log({ data }));
   };
 
   return (

@@ -2,12 +2,13 @@ import fs from 'fs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import path from 'path';
 
-interface IFeedback {
+export interface IFeedback {
   id: string;
   email: string;
   text: string;
 }
-interface FeedbackPOST {
+
+export interface FeedbackPOST {
   email: string;
   text: string;
 }
