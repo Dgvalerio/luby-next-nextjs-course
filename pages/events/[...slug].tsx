@@ -29,13 +29,36 @@ const FilteredEventsPage: NextPage = () => {
     if (data) setLoadedEvents(formatEvents(data));
   }, [data]);
 
-  if (!loadedEvents) return <p className="center">Loading...</p>;
+  let pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta name="description" content="A list of filtered events." />
+    </Head>
+  );
+
+  if (!loadedEvents)
+    return (
+      <>
+        {pageHeadData}
+        <p className="center">Loading...</p>
+      </>
+    );
 
   const filteredYear = filterData[0];
   const filteredMonth = filterData[1];
 
   const numYear = +filteredYear;
   const numMonth = +filteredMonth;
+
+  pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        content={`All events for "${numMonth}/${numYear}"`}
+      />
+    </Head>
+  );
 
   if (
     isNaN(numYear) ||
@@ -48,6 +71,7 @@ const FilteredEventsPage: NextPage = () => {
   )
     return (
       <>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter. Please adjust your values!</p>
         </ErrorAlert>
@@ -66,6 +90,7 @@ const FilteredEventsPage: NextPage = () => {
   if (!filteredEvents || filteredEvents.length === 0)
     return (
       <>
+        {pageHeadData}
         <ErrorAlert>
           <p>No events found for the chosen filter!</p>
         </ErrorAlert>
@@ -79,13 +104,7 @@ const FilteredEventsPage: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Filtered Events</title>
-        <meta
-          name="description"
-          content={`All events for "${numMonth}/${numYear}"`}
-        />
-      </Head>
+      {pageHeadData}
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </>
