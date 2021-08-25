@@ -20,10 +20,10 @@ export interface FeedbackGETResponse {
   };
 }
 
-const buildFeedbackPath = (): string =>
+export const buildFeedbackPath = (): string =>
   path.join(process.cwd(), 'data', 'feedback.json');
 
-const extractFeedback = (filePath: string): IFeedback[] => {
+export const extractFeedback = (filePath: string): IFeedback[] => {
   const fileData = fs.readFileSync(filePath);
   return JSON.parse(fileData.toString());
 };
