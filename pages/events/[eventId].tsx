@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import Head from 'next/head';
 
 import EventContent from '../../components/event-detail/event-content';
 import EventLogistics from '../../components/event-detail/event-logistics';
@@ -22,17 +23,23 @@ const EventDetailPage: NextPage<EventDetailPageProps> = ({ event }) => {
       </ErrorAlert>
     );
 
+  const { title, description, date, location, image } = event;
+
   return (
     <>
-      <EventSummary title={event.title} />
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+      </Head>
+      <EventSummary title={title} />
       <EventLogistics
-        date={event.date}
-        address={event.location}
-        image={event.image}
-        imageAlt={event.title}
+        date={date}
+        address={location}
+        image={image}
+        imageAlt={title}
       />
       <EventContent>
-        <p>{event.description}</p>
+        <p>{description}</p>
       </EventContent>
     </>
   );
@@ -44,9 +51,7 @@ export const getStaticProps: GetStaticProps<EventDetailPageProps> = async ({
   const event = await getEventById(eventId);
 
   return {
-    props: {
-      event,
-    },
+    props: { event },
     revalidate: 30,
   };
 };

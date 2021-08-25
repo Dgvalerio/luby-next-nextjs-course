@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 
 import { NextPage } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 
@@ -78,6 +79,13 @@ const FilteredEventsPage: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Filtered Events</title>
+        <meta
+          name="description"
+          content={`All events for "${numMonth}/${numYear}"`}
+        />
+      </Head>
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </>
