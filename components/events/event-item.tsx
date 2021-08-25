@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
 import { NextPage } from 'next';
+import Image from 'next/image';
 
 import AddressIcon from '../icons/address-icon';
 import ArrowRightIcon from '../icons/arrow-right-icon';
@@ -14,7 +14,7 @@ const EventItem: NextPage<{ title; image; date; location; id }> = ({
   location,
   id,
 }) => {
-  const humanReadableDate = new Date(date).toLocaleDateString('en-US', {
+  const humanReadableDate = new Date(date).toLocaleDateString('pt-BR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -24,7 +24,7 @@ const EventItem: NextPage<{ title; image; date; location; id }> = ({
 
   return (
     <li className={classes.item}>
-      <img src={`/${image}`} alt={title} />
+      <Image src={`/${image}`} alt={title} width={250} height={160} />
       <div className={classes.content}>
         <div className={classes.summary}>
           <h2>{title}</h2>
