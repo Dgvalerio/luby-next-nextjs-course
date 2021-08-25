@@ -13,6 +13,21 @@ export interface FeedbackPOST {
   text: string;
 }
 
+export interface FeedbackGETResponse {
+  message: string;
+  data: {
+    feedbacks: IFeedback[];
+  };
+}
+
+const buildFeedbackPath = (): string =>
+  path.join(process.cwd(), 'data', 'feedback.json');
+
+const extractFeedback = (filePath: string): IFeedback[] => {
+  const fileData = fs.readFileSync(filePath);
+  return JSON.parse(fileData.toString());
+};
+
 const handler = (req: NextApiRequest, res: NextApiResponse): void => {
   if (req.method === 'POST') {
     const { email, text }: FeedbackPOST = req.body;
@@ -24,9 +39,8 @@ const handler = (req: NextApiRequest, res: NextApiResponse): void => {
     };
 
     // sore that in a database or in a file.
-    const filePath = path.join(process.cwd(), 'data', 'feedback.json');
-    const fileData = fs.readFileSync(filePath);
-    const data: IFeedback[] = JSON.parse(fileData.toString());
+    const filePath = buildFeedbackPath();
+    const data = extractFeedback(filePath);
     data.push(newFeedback);
     fs.writeFileSync(filePath, JSON.stringify(data));
 
@@ -37,9 +51,17 @@ const handler = (req: NextApiRequest, res: NextApiResponse): void => {
       },
     });
   } else {
-    res.status(200).json({
+    const filePath = buildFeedbackPath();
+    const feedbacks = extractFeedback(filePath);
+
+    const body: FeedbackGETResponse = {
       message: 'This works!',
-    });
+      data: {
+        feedbacks,
+      },
+    };
+
+    res.status(200).json(body);
   }
 };
 
