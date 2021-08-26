@@ -1,16 +1,20 @@
-import { FormEvent } from 'react';
+import { FormEvent, useRef } from 'react';
 
 import { NextPage } from 'next';
 
+import api from '../../helpers/api';
 import classes from './newsletter-registration.module.css';
 
 const NewsletterRegistration: NextPage = () => {
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
   const registrationHandler = (event: FormEvent) => {
     event.preventDefault();
 
-    // fetch user input (state or refs)
-    // optional: validate input
-    // send valid data to API
+    const email = emailInputRef.current.value;
+
+    // eslint-disable-next-line no-console
+    api.newsletter.create({ email }).then(({ data }) => console.log(data));
   };
 
   return (
@@ -23,6 +27,7 @@ const NewsletterRegistration: NextPage = () => {
             id="email"
             placeholder="Your email"
             aria-label="Your email"
+            ref={emailInputRef}
           />
           <button type="submit">Register</button>
         </div>
