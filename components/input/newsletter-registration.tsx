@@ -1,11 +1,14 @@
-import { FormEvent, useRef } from 'react';
+import { FormEvent, useContext, useRef } from 'react';
 
 import { NextPage } from 'next';
 
 import api from '../../helpers/api';
+import NotificationContext from '../../store/notification-context';
 import classes from './newsletter-registration.module.css';
 
 const NewsletterRegistration: NextPage = () => {
+  const { showNotification } = useContext(NotificationContext);
+
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const registrationHandler = (event: FormEvent) => {
@@ -13,8 +16,28 @@ const NewsletterRegistration: NextPage = () => {
 
     const email = emailInputRef.current.value;
 
-    // eslint-disable-next-line no-console
-    api.newsletter.create({ email }).then(({ data }) => console.log(data));
+    showNotification({
+      title: 'Signing up...',
+      message: 'Registering for newsletter...',
+      status: 'pending',
+    });
+
+    api.newsletter
+      .create({ email })
+      .then(() =>
+        showNotification({
+          title: 'Success!',
+          message: 'Successfully registered for newsletter!',
+          status: 'success',
+        })
+      )
+      .catch((e) =>
+        showNotification({
+          title: 'Error!',
+          message: e.message || 'Something went wrong!',
+          status: 'error',
+        })
+      );
   };
 
   return (

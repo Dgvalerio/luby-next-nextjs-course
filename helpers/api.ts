@@ -2,11 +2,9 @@ import {
   CommentGetResponse,
   CommentPostRequest,
   CommentPostResponse,
-} from '../pages/api/comments/[eventId]';
-import {
   NewsletterPostRequest,
   NewsletterPostResponse,
-} from '../pages/api/newsletter';
+} from '../types/api';
 
 export const routes = {
   api: {
@@ -28,7 +26,11 @@ const api = {
   newsletter: {
     create: (body: NewsletterPostRequest): Promise<NewsletterPostResponse> =>
       fetch(routes.api.newsletter(), init(body)).then((response) =>
-        response.json()
+        response.ok
+          ? response.json()
+          : response.json().then(({ data }: NewsletterPostResponse) => {
+              throw new Error(data.message || 'Something went wrong!');
+            })
       ),
   },
   comment: {
