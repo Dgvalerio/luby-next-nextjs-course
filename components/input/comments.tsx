@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 
 import api from '../../helpers/api';
-import { IComment } from '../../pages/api/comments/[eventId]';
+import { IComment } from '../../types/interfaces';
 import CommentList from './comment-list';
 import classes from './comments.module.css';
 import NewComment from './new-comment';

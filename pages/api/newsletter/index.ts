@@ -1,25 +1,16 @@
-import { MongoClient } from 'mongodb';
-
-import { ApiHandler, ApiHandlerRequest } from '../../../types/api';
-
-export interface INewsletter {
-  email: string;
-}
-
-export interface NewsletterPostRequest {
-  email: string;
-}
-
-export interface NewsletterPostResponse {
-  data: {
-    message: string;
-  };
-}
+import { mongoDB } from '../../../helpers/mongo';
+import {
+  ApiHandler,
+  ApiHandlerRequest,
+  NewsletterPostRequest,
+  NewsletterPostResponse,
+} from '../../../types/api';
 
 type NewsletterApiRequest = ApiHandlerRequest<{
   method: 'POST';
   body: NewsletterPostRequest;
 }>;
+
 type NewsletterApiResponse = NewsletterPostResponse;
 
 const handler: ApiHandler<NewsletterApiRequest, NewsletterApiResponse> = async (
@@ -34,17 +25,7 @@ const handler: ApiHandler<NewsletterApiRequest, NewsletterApiResponse> = async (
       return;
     }
 
-    const client = await MongoClient.connect(
-      'mongodb+srv://dgvalerio:eRY1RrtpOPm8xxfQ@cluster0.sshuh.mongodb.net/newsletter?retryWrites=true&w=majority'
-    );
-
-    const db = client.db();
-
-    const n: INewsletter = { email: userEmail };
-
-    await db.collection('emails').insertOne(n);
-
-    client.close();
+    await mongoDB.newsletter.insertOne({ email: userEmail });
 
     res.status(201).json({ data: { message: 'Signed Up!' } });
   }

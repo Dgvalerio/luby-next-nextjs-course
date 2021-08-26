@@ -1,30 +1,12 @@
-import { ApiHandler, ApiHandlerRequest } from '../../../types/api';
-
-export interface IComment {
-  id: string;
-  email: string;
-  name: string;
-  text: string;
-}
-
-export interface CommentPostRequest {
-  email: string;
-  name: string;
-  text: string;
-}
-
-export interface CommentPostResponse {
-  data: {
-    message: string;
-    comment?: IComment;
-  };
-}
-
-export interface CommentGetResponse {
-  data: {
-    comments: IComment[];
-  };
-}
+import { mongoDB } from '../../../helpers/mongo';
+import {
+  ApiHandler,
+  ApiHandlerRequest,
+  CommentGetResponse,
+  CommentPostRequest,
+  CommentPostResponse,
+} from '../../../types/api';
+import { IComment } from '../../../types/interfaces';
 
 type CommentApiRequest =
   | ApiHandlerRequest<{
@@ -33,9 +15,10 @@ type CommentApiRequest =
       body: CommentPostRequest;
     }>
   | ApiHandlerRequest<{ method: 'GET'; query: { eventId: string } }>;
+
 type CommentApiResponse = CommentPostResponse | CommentGetResponse;
 
-const handler: ApiHandler<CommentApiRequest, CommentApiResponse> = (
+const handler: ApiHandler<CommentApiRequest, CommentApiResponse> = async (
   req,
   res
 ) => {
@@ -56,31 +39,18 @@ const handler: ApiHandler<CommentApiRequest, CommentApiResponse> = (
       return;
     }
 
-    const newComment: IComment = {
-      id: new Date().toISOString(),
+    const result = await mongoDB.comments.insertOne({
+      eventId,
       email,
       name,
       text,
-    };
+    });
 
     res
       .status(201)
-      .json({ data: { message: 'Added comment.', comment: newComment } });
+      .json({ data: { message: 'Added comment.', comment: result } });
   } else if (req.method === 'GET') {
-    const dummyList: IComment[] = [
-      {
-        id: 'c1',
-        name: 'Max',
-        email: 'test@test.com',
-        text: 'A first comment!',
-      },
-      {
-        id: 'c2',
-        name: 'Manuel',
-        email: 'test2@test.com',
-        text: 'A second comment!',
-      },
-    ];
+    const dummyList: IComment[] = [];
 
     res.status(201).json({ data: { comments: dummyList } });
   }

@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 
-import { IComment } from '../../pages/api/comments/[eventId]';
+import { IComment } from '../../types/interfaces';
 import classes from './comment-list.module.css';
 
 const CommentList: NextPage<{ items: IComment[] }> = ({ items }) => (
