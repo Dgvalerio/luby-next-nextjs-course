@@ -39,7 +39,11 @@ const api = {
       eventId?: string
     ): Promise<CommentPostResponse> =>
       fetch(routes.api.comment(eventId), init(body)).then((response) =>
-        response.json()
+        response.ok
+          ? response.json()
+          : response.json().then(({ data }: CommentPostResponse) => {
+              throw new Error(data.message || 'Something went wrong!');
+            })
       ),
     list: (eventId?: string): Promise<CommentGetResponse> =>
       fetch(routes.api.comment(eventId)).then((response) => response.json()),
