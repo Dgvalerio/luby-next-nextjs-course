@@ -1,4 +1,11 @@
-import { connectDatabase, mongoDB } from '../../../helpers/mongo';
+import { MongoClient } from 'mongodb';
+
+import {
+  connectDatabase,
+  formatComments,
+  getAllDocuments,
+  insertDocument,
+} from '../../../helpers/db-util';
 import {
   ApiHandler,
   ApiHandlerRequest,
@@ -38,28 +45,67 @@ const handler: ApiHandler<CommentApiRequest, CommentApiResponse> = async (
       return;
     }
 
-    const client = await connectDatabase();
+    let client: MongoClient;
 
-    const result = await mongoDB.comments.insertOne(client, {
-      eventId,
-      email,
-      name,
-      text,
-    });
+    try {
+      client = await connectDatabase();
+    } catch (e) {
+      res
+        .status(500)
+        .json({ data: { message: 'Connecting to the database failed!' } });
+      return;
+    }
 
-    client.close();
+    let result;
 
-    res
-      .status(201)
-      .json({ data: { message: 'Added comment.', comment: result } });
+    try {
+      result = await insertDocument({
+        client,
+        collection: 'comments',
+        document: {
+          eventId,
+          email,
+          name,
+          text,
+        },
+      });
+
+      res
+        .status(201)
+        .json({ data: { message: 'Added comment.', comment: result } });
+    } catch (e) {
+      res.status(500).json({ data: { message: 'Inserting comment failed!' } });
+    } finally {
+      client.close();
+    }
   } else if (req.method === 'GET') {
-    const client = await connectDatabase();
+    let client: MongoClient;
 
-    const result = await mongoDB.comments.find(client, eventId);
+    try {
+      client = await connectDatabase();
+    } catch (e) {
+      res
+        .status(500)
+        .json({ data: { message: 'Connecting to the database failed!' } });
+      return;
+    }
 
-    client.close();
+    let result;
 
-    res.status(201).json({ data: { comments: result } });
+    try {
+      result = await getAllDocuments(
+        client,
+        'comments',
+        { _id: -1 },
+        { eventId }
+      );
+
+      res.status(201).json({ data: { comments: formatComments(result) } });
+    } catch (e) {
+      res.status(500).json({ data: { message: 'Getting comments failed!' } });
+    } finally {
+      client.close();
+    }
   }
 };
 
