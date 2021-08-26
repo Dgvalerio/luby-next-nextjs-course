@@ -1,4 +1,4 @@
-import { InsertOneResult, MongoClient } from 'mongodb';
+import { InsertOneResult, MongoClient, Document } from 'mongodb';
 
 import { CommentPostRequest, NewsletterPostRequest } from '../types/api';
 import { IComment } from '../types/interfaces';
@@ -38,7 +38,7 @@ export const mongoDB = {
 
       return res;
     },
-    find: async (): Promise<IComment[]> => {
+    find: async (eventId: string): Promise<IComment[]> => {
       const client = await mongoConnect();
 
       const db = client.db();
@@ -47,13 +47,19 @@ export const mongoDB = {
         .collection('comments')
         .find()
         .sort({ _id: -1 })
+        .filter({ eventId })
         .toArray();
 
       client.close();
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return res;
+      return res.map((item: Document) => ({
+        // eslint-disable-next-line no-underscore-dangle
+        id: item._id.toString(),
+        name: item.name,
+        text: item.text,
+        eventId: item.eventId,
+        email: item.email,
+      }));
     },
   },
 };

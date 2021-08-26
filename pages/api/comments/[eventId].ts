@@ -49,7 +49,7 @@ const handler: ApiHandler<CommentApiRequest, CommentApiResponse> = async (
       .status(201)
       .json({ data: { message: 'Added comment.', comment: result } });
   } else if (req.method === 'GET') {
-    const result = await mongoDB.comments.find();
+    const result = await mongoDB.comments.find(eventId);
 
     res.status(201).json({ data: { comments: result } });
   }
