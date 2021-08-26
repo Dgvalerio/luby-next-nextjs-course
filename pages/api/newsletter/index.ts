@@ -1,4 +1,4 @@
-import { ApiHandler } from '../../../types/api';
+import { ApiHandler, ApiHandlerRequest } from '../../../types/api';
 
 export interface NewsletterPostRequest {
   email: string;
@@ -10,7 +10,10 @@ export interface NewsletterPostResponse {
   };
 }
 
-type NewsletterApiRequest = { method: 'POST'; body: NewsletterPostRequest };
+type NewsletterApiRequest = ApiHandlerRequest<{
+  method: 'POST';
+  body: NewsletterPostRequest;
+}>;
 type NewsletterApiResponse = NewsletterPostResponse;
 
 const handler: ApiHandler<NewsletterApiRequest, NewsletterApiResponse> = (
