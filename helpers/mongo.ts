@@ -1,6 +1,7 @@
 import { InsertOneResult, MongoClient } from 'mongodb';
 
 import { CommentPostRequest, NewsletterPostRequest } from '../types/api';
+import { IComment } from '../types/interfaces';
 
 export const mongoConnect = async (): Promise<MongoClient> =>
   MongoClient.connect(
@@ -11,7 +12,7 @@ export const mongoDB = {
   newsletter: {
     insertOne: async (
       data: NewsletterPostRequest
-    ): Promise<InsertOneResult<Document>> => {
+    ): Promise<InsertOneResult<NewsletterPostRequest>> => {
       const client = await mongoConnect();
 
       const db = client.db();
@@ -26,7 +27,7 @@ export const mongoDB = {
   comments: {
     insertOne: async (
       data: CommentPostRequest & { eventId: string }
-    ): Promise<InsertOneResult<Document>> => {
+    ): Promise<InsertOneResult<CommentPostRequest & { eventId: string }>> => {
       const client = await mongoConnect();
 
       const db = client.db();
@@ -35,6 +36,23 @@ export const mongoDB = {
 
       client.close();
 
+      return res;
+    },
+    find: async (): Promise<IComment[]> => {
+      const client = await mongoConnect();
+
+      const db = client.db();
+
+      const res = await db
+        .collection('comments')
+        .find()
+        .sort({ _id: -1 })
+        .toArray();
+
+      client.close();
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       return res;
     },
   },

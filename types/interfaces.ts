@@ -1,5 +1,5 @@
 export interface IEvent {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   location: string;
@@ -9,12 +9,12 @@ export interface IEvent {
 }
 
 export interface INewsletter {
-  id: string;
+  _id: string;
   email: string;
 }
 
 export interface IComment {
-  id: string;
+  _id: string;
   eventId: string;
   email: string;
   name: string;

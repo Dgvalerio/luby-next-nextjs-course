@@ -6,7 +6,6 @@ import {
   CommentPostRequest,
   CommentPostResponse,
 } from '../../../types/api';
-import { IComment } from '../../../types/interfaces';
 
 type CommentApiRequest =
   | ApiHandlerRequest<{
@@ -50,9 +49,9 @@ const handler: ApiHandler<CommentApiRequest, CommentApiResponse> = async (
       .status(201)
       .json({ data: { message: 'Added comment.', comment: result } });
   } else if (req.method === 'GET') {
-    const dummyList: IComment[] = [];
+    const result = await mongoDB.comments.find();
 
-    res.status(201).json({ data: { comments: dummyList } });
+    res.status(201).json({ data: { comments: result } });
   }
 };
 
