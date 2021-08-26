@@ -7,7 +7,7 @@ import { INotification } from '../../types/store';
 import classes from './notification.module.css';
 
 const Notification: NextPage<INotification> = ({ title, message, status }) => {
-  const notificationCtx = useContext(NotificationContext);
+  const { hideNotification } = useContext(NotificationContext);
 
   let statusClasses = '';
 
@@ -26,8 +26,13 @@ const Notification: NextPage<INotification> = ({ title, message, status }) => {
   const activeClasses = `${classes.notification} ${statusClasses}`;
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-    <div className={activeClasses} onClick={notificationCtx.hideNotification}>
+    <div
+      className={activeClasses}
+      onClick={hideNotification}
+      onKeyPress={hideNotification}
+      role="button"
+      tabIndex={0}
+    >
       <h2>{title}</h2>
       <p>{message}</p>
     </div>
