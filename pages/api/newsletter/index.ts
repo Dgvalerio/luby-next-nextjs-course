@@ -1,4 +1,4 @@
-import { mongoDB } from '../../../helpers/mongo';
+import { connectDatabase, mongoDB } from '../../../helpers/mongo';
 import {
   ApiHandler,
   ApiHandlerRequest,
@@ -25,7 +25,24 @@ const handler: ApiHandler<NewsletterApiRequest, NewsletterApiResponse> = async (
       return;
     }
 
-    await mongoDB.newsletter.insertOne({ email: userEmail });
+    let client;
+
+    try {
+      client = await connectDatabase();
+    } catch (e) {
+      res
+        .status(500)
+        .json({ data: { message: 'Connecting to the database failed!' } });
+      return;
+    }
+
+    try {
+      await mongoDB.newsletter.insertOne(client, { email: userEmail });
+      client.close();
+    } catch (e) {
+      res.status(500).json({ data: { message: 'Inserting data failed!' } });
+      return;
+    }
 
     res.status(201).json({ data: { message: 'Signed Up!' } });
   }

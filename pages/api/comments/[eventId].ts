@@ -1,4 +1,4 @@
-import { mongoDB } from '../../../helpers/mongo';
+import { connectDatabase, mongoDB } from '../../../helpers/mongo';
 import {
   ApiHandler,
   ApiHandlerRequest,
@@ -38,18 +38,26 @@ const handler: ApiHandler<CommentApiRequest, CommentApiResponse> = async (
       return;
     }
 
-    const result = await mongoDB.comments.insertOne({
+    const client = await connectDatabase();
+
+    const result = await mongoDB.comments.insertOne(client, {
       eventId,
       email,
       name,
       text,
     });
 
+    client.close();
+
     res
       .status(201)
       .json({ data: { message: 'Added comment.', comment: result } });
   } else if (req.method === 'GET') {
-    const result = await mongoDB.comments.find(eventId);
+    const client = await connectDatabase();
+
+    const result = await mongoDB.comments.find(client, eventId);
+
+    client.close();
 
     res.status(201).json({ data: { comments: result } });
   }
