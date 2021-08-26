@@ -1,22 +1,18 @@
 import { NextPage } from 'next';
 
+import { IComment } from '../../pages/api/comments/[eventId]';
 import classes from './comment-list.module.css';
 
-const CommentList: NextPage = () => (
+const CommentList: NextPage<{ items: IComment[] }> = ({ items }) => (
   <ul className={classes.comments}>
-    {/* Render list of comments - fetched from API */}
-    <li>
-      <p>My comment is amazing!</p>
-      <div>
-        By <address>Maximilian</address>
-      </div>
-    </li>
-    <li>
-      <p>My comment is amazing!</p>
-      <div>
-        By <address>Maximilian</address>
-      </div>
-    </li>
+    {items.map((item) => (
+      <li key={item.id}>
+        <p>{item.text}</p>
+        <div>
+          By <address>{item.name}</address>
+        </div>
+      </li>
+    ))}
   </ul>
 );
 
