@@ -2,13 +2,13 @@ import { NextPage } from 'next';
 
 import ReactMarkdown from 'react-markdown';
 
-import { DUMMY_POSTS } from '../../../pages';
+import { IPost } from '../../../types/interfaces';
 import classes from './post-content.module.css';
 import PostHeader from './post-header';
 
-const PostContent: NextPage = () => {
-  const { slug, image, title, content } = DUMMY_POSTS[0];
-
+const PostContent: NextPage<{ post: IPost }> = ({
+  post: { slug, image, title, content },
+}) => {
   const imagePath = `/images/posts/${slug}/${image}`;
 
   return (

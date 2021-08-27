@@ -6,13 +6,14 @@ import { IPost } from '../types/interfaces';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
-export const getPostData = (fileName: string): IPost => {
-  const filePath = path.join(postsDirectory, fileName);
+export const getPostFiles = (): string[] => fs.readdirSync(postsDirectory);
+
+export const getPostData = (postIdentifier: string): IPost => {
+  const postSlug = postIdentifier.replace(/.md$/, '');
+  const filePath = path.join(postsDirectory, `${postSlug}.md`);
   const fileContent = fs.readFileSync(filePath, 'utf-8');
 
   const { data, content } = matter(fileContent);
-
-  const postSlug = fileName.replace(/.md$/, '');
 
   return {
     slug: postSlug,
@@ -26,7 +27,7 @@ export const getPostData = (fileName: string): IPost => {
 };
 
 export const getAllPosts = (): IPost[] => {
-  const postFiles = fs.readdirSync(postsDirectory);
+  const postFiles = getPostFiles();
 
   const allPosts = postFiles.map((file) => getPostData(file));
 
