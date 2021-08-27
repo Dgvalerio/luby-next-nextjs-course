@@ -4,7 +4,7 @@ import FeaturedPosts from '../components/home-page/featured-posts';
 import Hero from '../components/home-page/hero';
 import { IPost } from '../types/interfaces';
 
-const DUMMY_POSTS: IPost[] = [
+export const DUMMY_POSTS: IPost[] = [
   {
     slug: 'getting-started-with-nextjs',
     title: 'Getting Started with NextJS',
