@@ -1,5 +1,13 @@
 import { NextPage } from 'next';
 
-const HomePage: NextPage = () => <h1>Home Page</h1>;
+import FeaturedPosts from '../components/home-page/featured-posts';
+import Hero from '../components/home-page/hero';
+
+const HomePage: NextPage = () => (
+  <>
+    <Hero />
+    <FeaturedPosts />
+  </>
+);
 
 export default HomePage;
