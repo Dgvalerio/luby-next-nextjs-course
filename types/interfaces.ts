@@ -5,4 +5,5 @@ export interface IPost {
   date: string;
   slug: string;
   content: string;
+  isFeatured: boolean;
 }
