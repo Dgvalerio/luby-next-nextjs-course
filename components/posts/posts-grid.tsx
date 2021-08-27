@@ -7,7 +7,7 @@ import classes from './posts-grid.module.css';
 const PostGrid: NextPage<{ posts: IPost[] }> = ({ posts }) => (
   <ul className={classes.grid}>
     {posts.map((post) => (
-      <PostItem key={post.id} />
+      <PostItem key={post.slug} post={post} />
     ))}
   </ul>
 );
