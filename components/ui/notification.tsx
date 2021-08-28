@@ -1,5 +1,7 @@
 import { NextPage } from 'next';
 
+import ReactDOM from 'react-dom';
+
 import { INotification } from '../../types/interfaces';
 import classes from './notification.module.css';
 
@@ -12,11 +14,12 @@ const Notification: NextPage<INotification> = ({ title, message, status }) => {
 
   const cssClasses = `${classes.notification} ${statusClasses}`;
 
-  return (
+  return ReactDOM.createPortal(
     <div className={cssClasses}>
       <h2>{title}</h2>
       <p>{message}</p>
-    </div>
+    </div>,
+    document.getElementById('notifications')
   );
 };
 
