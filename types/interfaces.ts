@@ -14,3 +14,9 @@ export interface IMessage {
   name: string;
   message: string;
 }
+
+export interface INotification {
+  title: string;
+  message: string;
+  status: 'pending' | 'success' | 'error';
+}

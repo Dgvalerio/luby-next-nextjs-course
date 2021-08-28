@@ -1,29 +1,87 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { NextPage } from 'next';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
-import { ContactPostRequest } from '../../pages/api/contact';
+import {
+  ContactPostRequest,
+  ContactPostResponse,
+} from '../../pages/api/contact';
+import { INotification } from '../../types/interfaces';
+import Notification from '../ui/notification';
 import classes from './contact-form.module.css';
+
+const sendContactData = async (contactDetails: ContactPostRequest) => {
+  const response = await fetch('api/contact/', {
+    method: 'POST',
+    body: JSON.stringify(contactDetails),
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const data: ContactPostResponse = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.data.message || 'Something went wrong!');
+  }
+};
 
 const ContactForm: NextPage = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
+  const [requestStatus, setRequestStatus] = useState<
+    'pending' | 'success' | 'error'
+  >();
+  const [requestError, setRequestError] = useState();
 
-  const sendMessageHandler = (event: FormEvent) => {
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (requestStatus === 'success' || requestStatus === 'error') {
+      const timer = setTimeout(() => {
+        setRequestError(null);
+        setRequestStatus(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [requestStatus]);
+
+  const sendMessageHandler = async (event: FormEvent) => {
     event.preventDefault();
 
-    const body: ContactPostRequest = { message, name, email };
+    setRequestStatus('pending');
 
-    fetch('api/contact/', {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((response) => response.json())
-      .then((response) => console.log({ response }));
+    try {
+      await sendContactData({ message, name, email });
+      setRequestStatus('success');
+      setName('');
+      setMessage('');
+      setEmail('');
+    } catch (error) {
+      setRequestError(error);
+      setRequestStatus('error');
+    }
   };
+
+  let notification: INotification;
+
+  if (requestStatus === 'pending')
+    notification = {
+      status: 'pending',
+      title: 'Sending message...',
+      message: 'Your message is on its way!',
+    };
+  else if (requestStatus === 'success')
+    notification = {
+      status: 'success',
+      title: 'Success!',
+      message: 'Message sent successfully!',
+    };
+  else if (requestStatus === 'error')
+    notification = {
+      status: 'error',
+      title: 'Error!',
+      message: requestError,
+    };
 
   return (
     <section className={classes.contact}>
@@ -65,6 +123,13 @@ const ContactForm: NextPage = () => {
           <button type="submit">Send Message</button>
         </div>
       </form>
+      {notification && (
+        <Notification
+          title={notification.title}
+          message={notification.message}
+          status={notification.status}
+        />
+      )}
     </section>
   );
 };
