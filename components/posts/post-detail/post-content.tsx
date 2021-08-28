@@ -4,6 +4,8 @@ import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import { SpecialComponents } from 'react-markdown/lib/ast-to-react';
 import { NormalComponents } from 'react-markdown/lib/complex-types';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark as theme } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { IPost } from '../../../types/interfaces';
 import classes from './post-content.module.css';
@@ -48,6 +50,14 @@ const PostContent: NextPage<{ post: IPost }> = ({
         );
       }
       return <p>{children}</p>;
+    },
+    code({ className, children }) {
+      const language = className.split('-')[1];
+      return (
+        <SyntaxHighlighter style={theme} language={language}>
+          {children}
+        </SyntaxHighlighter>
+      );
     },
   };
 
