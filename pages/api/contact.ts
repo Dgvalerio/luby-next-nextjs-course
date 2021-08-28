@@ -1,12 +1,12 @@
 import { ApiHandler, ApiHandlerRequest } from '../../types/api';
 
-interface ContactPostRequest {
+export interface ContactPostRequest {
   email: string;
   name: string;
   message: string;
 }
 
-interface ContactPostResponse {
+export interface ContactPostResponse {
   data: {
     message: string;
     data?: ContactPostRequest;
