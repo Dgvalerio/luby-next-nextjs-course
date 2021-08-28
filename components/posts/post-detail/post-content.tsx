@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { SpecialComponents } from 'react-markdown/lib/ast-to-react';
 import { NormalComponents } from 'react-markdown/lib/complex-types';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark as theme } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { atomDark as theme } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 import { IPost } from '../../../types/interfaces';
 import classes from './post-content.module.css';
