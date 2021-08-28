@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import Head from 'next/head';
 
 import PostContent from '../../components/posts/post-detail/post-content';
 import { getPostData, getPostFiles } from '../../lib/posts-util';
@@ -9,7 +10,13 @@ interface PostDetailPageProps {
 }
 
 const PostDetailPage: NextPage<PostDetailPageProps> = ({ post }) => (
-  <PostContent post={post} />
+  <>
+    <Head>
+      <title>{post.title}</title>
+      <meta name="description" content={post.excerpt} />
+    </Head>
+    <PostContent post={post} />
+  </>
 );
 
 export const getStaticProps: GetStaticProps<PostDetailPageProps> = ({
@@ -24,6 +31,7 @@ export const getStaticProps: GetStaticProps<PostDetailPageProps> = ({
     revalidate: 600,
   };
 };
+
 export const getStaticPaths: GetStaticPaths = () => {
   const postFileNames = getPostFiles();
 
