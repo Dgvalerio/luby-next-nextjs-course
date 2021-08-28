@@ -7,3 +7,10 @@ export interface IPost {
   content: string;
   isFeatured: boolean;
 }
+
+export interface IMessage {
+  id: string;
+  email: string;
+  name: string;
+  message: string;
+}

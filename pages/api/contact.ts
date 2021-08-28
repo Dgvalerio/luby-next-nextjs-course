@@ -1,4 +1,7 @@
+import { MongoClient } from 'mongodb';
+
 import { ApiHandler, ApiHandlerRequest } from '../../types/api';
+import { IMessage } from '../../types/interfaces';
 
 export interface ContactPostRequest {
   email: string;
@@ -9,7 +12,7 @@ export interface ContactPostRequest {
 export interface ContactPostResponse {
   data: {
     message: string;
-    data?: ContactPostRequest;
+    data?: IMessage;
   };
 }
 
@@ -20,7 +23,7 @@ type ContactApiRequest = ApiHandlerRequest<{
 
 type ContactApiResponse = ContactPostResponse;
 
-const handler: ApiHandler<ContactApiRequest, ContactApiResponse> = (
+const handler: ApiHandler<ContactApiRequest, ContactApiResponse> = async (
   req,
   res
 ) => {
@@ -43,11 +46,40 @@ const handler: ApiHandler<ContactApiRequest, ContactApiResponse> = (
       return;
     }
 
-    // Store
     const newMessage = { email, message, name };
 
+    let client;
+
+    try {
+      client = await MongoClient.connect(
+        'mongodb+srv://dgvalerio:eRY1RrtpOPm8xxfQ@cluster0.sshuh.mongodb.net/my-site?retryWrites=true&w=majority'
+      );
+    } catch (error) {
+      res
+        .status(500)
+        .json({ data: { message: 'Could not connect to database.' } });
+      return;
+    }
+
+    const db = client.db();
+
+    let result;
+
+    try {
+      result = await db.collection('messages').insertOne(newMessage);
+    } catch (error) {
+      client.close();
+      res.status(500).json({ data: { message: 'Storing message failed!' } });
+      return;
+    }
+
+    client.close();
+
     res.status(201).json({
-      data: { message: 'Successfully stored message!', data: newMessage },
+      data: {
+        message: 'Successfully stored message!',
+        data: { id: result.insertedId, ...newMessage },
+      },
     });
   }
 };
