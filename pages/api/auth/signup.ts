@@ -49,7 +49,19 @@ const handler: ApiHandler<SignUpApiRequest, SignUpApiResponse> = async (
 
   const hashedPassword = await hashPassword(password);
 
-  const result = db.collection('users').insertOne({
+  const existingUser = await db.collection('users').findOne({ email });
+
+  if (existingUser) {
+    res.status(422).json({
+      data: {
+        message: 'Users exists already.',
+      },
+    });
+    client.close();
+    return;
+  }
+
+  const result = await db.collection('users').insertOne({
     email,
     password: hashedPassword,
   });
