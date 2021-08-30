@@ -3,11 +3,7 @@ import Providers from 'next-auth/providers';
 
 import { verifyPassword } from '../../../lib/auth';
 import { connectToDatabase } from '../../../lib/db';
-
-export interface SignInPostRequest {
-  email: string;
-  password: string;
-}
+import { SignInPostRequest } from '../../../types/api';
 
 export default NextAuth({
   session: {

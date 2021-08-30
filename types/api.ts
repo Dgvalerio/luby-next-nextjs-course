@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextApiRequest, NextApiResponse } from 'next';
+import { SignInOptions } from 'next-auth/client';
 
 export type ApiHandlerRequest<X = NextApiRequest> = Omit<
   NextApiRequest,
@@ -11,3 +12,8 @@ export type ApiHandler<X = NextApiRequest, Y = any> = (
   req: X,
   res: NextApiResponse<Y>
 ) => void | Promise<void>;
+
+export interface SignInPostRequest extends SignInOptions {
+  email: string;
+  password: string;
+}

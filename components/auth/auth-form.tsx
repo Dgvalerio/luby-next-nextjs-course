@@ -2,8 +2,10 @@
 import { FormEvent, useRef, useState } from 'react';
 
 import { NextPage } from 'next';
+import { signIn } from 'next-auth/client';
 
 import { SignUpPostRequest } from '../../pages/api/auth/signup';
+import { SignInPostRequest } from '../../types/api';
 import classes from './auth-form.module.css';
 
 const createUser = async (email: string, password: string) => {
@@ -39,6 +41,9 @@ const AuthForm: NextPage = () => {
 
     if (isLogin) {
       // log user in
+      const options: SignInPostRequest = { redirect: false, email, password };
+      const result = await signIn('credentials', options);
+      console.log(result);
     } else {
       // create user
       try {
