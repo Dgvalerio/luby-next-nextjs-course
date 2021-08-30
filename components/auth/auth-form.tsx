@@ -3,6 +3,7 @@ import { FormEvent, useRef, useState } from 'react';
 
 import { NextPage } from 'next';
 import { signIn } from 'next-auth/client';
+import { useRouter } from 'next/router';
 
 import { SignUpPostRequest } from '../../pages/api/auth/signup';
 import { SignInPostRequest } from '../../types/api';
@@ -27,6 +28,7 @@ const createUser = async (email: string, password: string) => {
 };
 
 const AuthForm: NextPage = () => {
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +45,7 @@ const AuthForm: NextPage = () => {
       // log user in
       const options: SignInPostRequest = { redirect: false, email, password };
       const result = await signIn('credentials', options);
-      console.log(result);
+      if (!result.error) router.replace('/profile');
     } else {
       // create user
       try {
