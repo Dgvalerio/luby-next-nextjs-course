@@ -1,5 +1,7 @@
 import { NextPage } from 'next';
 
-const Home: NextPage = () => <h1>Hello</h1>;
+import StartingPageContent from '../components/starting-page/starting-page';
 
-export default Home;
+const HomePage: NextPage = () => <StartingPageContent />;
+
+export default HomePage;
