@@ -24,6 +24,8 @@ const handler: ApiHandler<SignUpApiRequest, SignUpApiResponse> = async (
   req,
   res
 ) => {
+  if (req.method !== 'POST') return;
+
   const { password, email } = req.body;
 
   if (
@@ -45,9 +47,11 @@ const handler: ApiHandler<SignUpApiRequest, SignUpApiResponse> = async (
 
   const db = client.db();
 
+  const hashedPassword = await hashPassword(password);
+
   const result = db.collection('users').insertOne({
     email,
-    password: hashPassword(password),
+    password: hashedPassword,
   });
 
   res.status(201).json({ data: { message: 'Created user!' } });
