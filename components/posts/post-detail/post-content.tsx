@@ -4,12 +4,17 @@ import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import { SpecialComponents } from 'react-markdown/lib/ast-to-react';
 import { NormalComponents } from 'react-markdown/lib/complex-types';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark as theme } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import css from 'react-syntax-highlighter/dist/cjs/languages/prism/css';
+import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
+import theme from 'react-syntax-highlighter/dist/cjs/styles/prism/atom-dark';
 
 import { IPost } from '../../../types/interfaces';
 import classes from './post-content.module.css';
 import PostHeader from './post-header';
+
+SyntaxHighlighter.registerLanguage('js', js);
+SyntaxHighlighter.registerLanguage('css', css);
 
 const PostContent: NextPage<{ post: IPost }> = ({
   post: { slug, image, title, content },
