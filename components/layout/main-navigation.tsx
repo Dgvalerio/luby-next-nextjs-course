@@ -6,7 +6,7 @@ import Link from 'next/link';
 import classes from './main-navigation.module.css';
 
 const MainNavigation: NextPage = () => {
-  const [session, loading] = useSession();
+  const [session] = useSession();
 
   const logoutHandler = async () => signout();
 
