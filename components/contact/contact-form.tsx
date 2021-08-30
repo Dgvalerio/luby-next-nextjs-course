@@ -74,7 +74,7 @@ const ContactForm: NextPage = () => {
     notification = {
       status: 'success',
       title: 'Success!',
-      message: 'Message sent successfully!',
+      message: 'Message sent successfully!!!!',
     };
   else if (requestStatus === 'error')
     notification = {
