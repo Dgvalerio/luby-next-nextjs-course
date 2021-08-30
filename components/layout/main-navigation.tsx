@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { NextPage } from 'next';
-import { useSession } from 'next-auth/client';
+import { signout, useSession } from 'next-auth/client';
 import Link from 'next/link';
 
 import classes from './main-navigation.module.css';
@@ -8,7 +8,7 @@ import classes from './main-navigation.module.css';
 const MainNavigation: NextPage = () => {
   const [session, loading] = useSession();
 
-  console.log({ session, loading });
+  const logoutHandler = async () => signout();
 
   return (
     <header className={classes.header}>
@@ -31,7 +31,9 @@ const MainNavigation: NextPage = () => {
           )}
           {session && (
             <li>
-              <button type="button">Logout</button>
+              <button type="button" onClick={logoutHandler}>
+                Logout
+              </button>
             </li>
           )}
         </ul>
