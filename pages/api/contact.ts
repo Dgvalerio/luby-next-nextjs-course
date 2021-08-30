@@ -50,10 +50,10 @@ const handler: ApiHandler<ContactApiRequest, ContactApiResponse> = async (
 
     let client;
 
+    const connectString = `mongodb+srv://${process.env.mongodb_username}:${process.env.mongodb_password}@${process.env.mongodb_cluster}.sshuh.mongodb.net/${process.env.mongodb_database}?retryWrites=true&w=majority`;
+
     try {
-      client = await MongoClient.connect(
-        'mongodb+srv://dgvalerio:eRY1RrtpOPm8xxfQ@cluster0.sshuh.mongodb.net/my-site?retryWrites=true&w=majority'
-      );
+      client = await MongoClient.connect(connectString);
     } catch (error) {
       res
         .status(500)
