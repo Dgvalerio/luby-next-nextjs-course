@@ -1,5 +1,9 @@
-import { hash } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 
-// eslint-disable-next-line import/prefer-default-export
 export const hashPassword = async (password: string): Promise<string> =>
   hash(password, 12);
+
+export const verifyPassword = async (
+  password: string,
+  hashedPassword: string
+): Promise<boolean> => compare(password, hashedPassword);
